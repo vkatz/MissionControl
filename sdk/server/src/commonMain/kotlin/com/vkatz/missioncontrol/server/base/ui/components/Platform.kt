@@ -18,3 +18,11 @@ expect fun PlatformVerticalScrollbar(
     styleUnhoverColor: Color,
     styleHoverColor: Color
 )
+
+@Composable
+expect fun PlatformOptionDialog(
+    visible: Boolean,
+    onCloseRequest: () -> Unit,
+    title: String,
+    content: @Composable () -> Unit
+)

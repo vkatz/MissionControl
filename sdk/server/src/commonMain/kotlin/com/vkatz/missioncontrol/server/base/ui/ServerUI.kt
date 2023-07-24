@@ -24,9 +24,13 @@ fun ServerUI(
     theme: (@Composable (@Composable () -> Unit) -> Unit)? = null
 ) {
     if (theme != null) theme {
-        ServerUIBody(server)
+        Surface(modifier) {
+            ServerUIBody(server)
+        }
     } else MissionControlTheme(modifier) {
-        ServerUIBody(server)
+        Surface(modifier) {
+            ServerUIBody(server)
+        }
     }
 }
 
@@ -90,11 +94,14 @@ private fun ConnectionsTabs(
                 selected = item == activeConnection,
                 onClick = { onClick(item) },
             ) {
-                Text(
-                    item.name,
+                Box(
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                        .sizeIn(minHeight = 36.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = item.name)
+                }
             }
         }
     }
@@ -128,7 +135,7 @@ private fun ConnectionUI(connection: AbsConnection) {
                     shadowElevation = 4.dp,
                     tonalElevation = 8.dp
                 ) {
-                    Box(Modifier.padding(8.dp)) {
+                    Box(Modifier.padding(vertical = 8.dp, horizontal = 12.dp)) {
                         Command(it, Modifier.fillMaxWidth()) {
                             scope.launch {
                                 connection.sendCommand(it)

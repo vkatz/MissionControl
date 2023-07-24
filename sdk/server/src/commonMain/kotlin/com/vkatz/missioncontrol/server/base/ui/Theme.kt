@@ -4,7 +4,6 @@ package com.vkatz.missioncontrol.server.base.ui
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -49,10 +48,6 @@ internal fun MissionControlTheme(
             outlineVariant = Color(0xFF5E6060),
             scrim = NOT_SPECIFIED,
         ),
-    ) {
-        Surface(
-            modifier = modifier,
-            content = content
-        )
-    }
+        content = content
+    )
 }
