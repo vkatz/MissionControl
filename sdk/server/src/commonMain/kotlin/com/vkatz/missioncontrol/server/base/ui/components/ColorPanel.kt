@@ -47,7 +47,7 @@ internal fun HSLPanel(
                     )
                 ),
                 onValueChange = {
-                    hsl = hsl.copy(h = it)
+                    hsl.h = it
                     onColorChanged(hsl.toRgba())
                 }
             )
@@ -64,7 +64,7 @@ internal fun HSLPanel(
                     ),
                 ),
                 onValueChange = {
-                    hsl = hsl.copy(s = it / 100f)
+                    hsl.s = it / 100f
                     onColorChanged(hsl.toRgba())
                 }
             )
@@ -82,7 +82,7 @@ internal fun HSLPanel(
                     )
                 ),
                 onValueChange = {
-                    hsl = hsl.copy(l = it / 100f)
+                    hsl.l = it / 100f
                     onColorChanged(hsl.toRgba())
                 }
             )
@@ -100,7 +100,7 @@ internal fun HSLPanel(
                     ),
                 ),
                 onValueChange = {
-                    hsl = hsl.copy(a = it / 100f)
+                    hsl.a = it / 100f
                     onColorChanged(hsl.toRgba())
                 },
                 drawTransparencyGrid = true

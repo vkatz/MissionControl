@@ -145,7 +145,7 @@ internal fun SliderColorfulCompact(
                     val cellCount = 40
                     val cellWidth = size.width / cellCount
 
-                    for (x in 0 until cellCount) {
+                    for (x in 0..<cellCount) {
                         val isGrayTile = (x % 2 == 1)
 
                         drawLine(

@@ -47,7 +47,7 @@ private enum class ColorSpace {
 }
 
 @Composable
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalStdlibApi::class)
 internal fun ColorCommand(
     command: ColorPropertyUpdate,
     modifier: Modifier = Modifier,
@@ -73,7 +73,7 @@ internal fun ColorCommand(
             val focusManager = LocalFocusManager.current
 
             fun submit() {
-                val newValue = input.trim().toLong(16).toInt()
+                val newValue = input.hexToInt()
                 state = Color(newValue)
                 command.value = newValue
                 onChanged()

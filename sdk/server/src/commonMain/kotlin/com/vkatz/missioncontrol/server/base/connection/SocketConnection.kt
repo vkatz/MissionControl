@@ -1,6 +1,7 @@
 package com.vkatz.missioncontrol.server.base.connection
 
 import com.vkatz.missioncontrol.common.Command
+import com.vkatz.missioncontrol.common.Command.*
 import com.vkatz.missioncontrol.common.MissionControlTPCChannel
 import com.vkatz.missioncontrol.common.ValueCommand
 import io.ktor.network.sockets.*
@@ -21,19 +22,16 @@ class SocketConnection(socket: Socket) : AbsConnection() {
                 is ValueCommand<*> -> {
                     val pos = activeCommands.indexOfFirst { it.uuid == command.uuid }
                     if (pos >= 0) activeCommands[pos] = command
-                    else {
-                        activeCommands.add(command)
-                        activeCommands.sortBy { it.orderId }
-                    }
+                    else activeCommands.add(command)
                     onCommandsChangedListener?.invoke(activeCommands)
                 }
 
-                is Command.PropertyRemove -> {
+                is PropertyRemove -> {
                     activeCommands.removeIf { it.uuid == command.removeUUID }
                     onCommandsChangedListener?.invoke(activeCommands)
                 }
 
-                is Command.ConnectionName -> {
+                is ConnectionName -> {
                     this.name = command.name
                     onConnectionChanged()
                 }

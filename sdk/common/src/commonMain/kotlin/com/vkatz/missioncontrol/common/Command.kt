@@ -13,8 +13,9 @@ interface ValueCommand<T : Any?> {
 
 @Serializable
 sealed class Command {
-    val orderId: Int = globalOrderId.getAndIncrement()
+    var orderId: Int = globalOrderId.getAndIncrement()
     val uuid: String = UUID.randomUUID().toString()
+    var group: String = ""
 
     // action commands
 

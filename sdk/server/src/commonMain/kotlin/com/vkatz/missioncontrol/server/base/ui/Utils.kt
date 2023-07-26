@@ -22,22 +22,46 @@ fun <C, T> C.valueAsState(): State<T> where C : Command, C : ValueCommand<T> {
     return state
 }
 
-internal data class HSLColor(
-    val h: Float = 0f,
-    val s: Float = 0f,
-    val l: Float = 0f,
-    val a: Float = 1f,
-) {
-    override fun equals(other: Any?): Boolean {
-        return other is HSLColor
-                && (h - other.h).absoluteValue < 0.0001
-                && (s - other.s).absoluteValue < 0.0001
-                && (l - other.l).absoluteValue < 0.0001
-                && (a - other.a).absoluteValue < 0.0001
-    }
+@JvmInline
+value class HSLColor(private val data: FloatArray) {
+    constructor (
+        h: Float = 0f,
+        s: Float = 0f,
+        l: Float = 0f,
+        a: Float = 1f
+    ) : this(floatArrayOf(h, s, l, a))
+
+    var h: Float
+        get() = data[0]
+        set(value) {
+            data[0] = value
+        }
+
+    var s: Float
+        get() = data[1]
+        set(value) {
+            data[1] = value
+        }
+
+    var l: Float
+        get() = data[2]
+        set(value) {
+            data[2] = value
+        }
+
+    var a: Float
+        get() = data[3]
+        set(value) {
+            data[3] = value
+        }
 }
 
-internal fun Color.toHex() = String.format("%08x", toArgb()).uppercase()
+@OptIn(ExperimentalStdlibApi::class)
+fun Color.toHex() = toArgb().toHexString(
+    format = HexFormat {
+        upperCase = true
+    }
+)
 
 internal fun Color.toHsl(): HSLColor {
     val r: Float = this.red
