@@ -2,7 +2,6 @@ package com.vkatz.missioncontrol.server.base.ui
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -16,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.vkatz.missioncontrol.common.Command
+import com.vkatz.missioncontrol.common.ValueCommand
 import com.vkatz.missioncontrol.server.base.MissionControlServer
 import com.vkatz.missioncontrol.server.base.connection.AbsConnection
 import com.vkatz.missioncontrol.server.base.ui.commands.Command
@@ -35,7 +34,7 @@ fun ServerUI(
         Surface(modifier) {
             ServerUIBody(server)
         }
-    } else MissionControlTheme(modifier) {
+    } else MissionControlTheme {
         Surface(modifier) {
             ServerUIBody(server)
         }
@@ -124,27 +123,28 @@ private fun RowScope.ConnectionsTabs(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ConnectionUI(
     connection: AbsConnection,
     groupItems: Boolean = true,
 ) {
     val scope = rememberCoroutineScope()
+    var invalidateKey by remember { mutableStateOf(0) }
     var commands by remember {
-        mutableStateOf<List<Command>>(
+        mutableStateOf<List<ValueCommand<*>>>(
             emptyList(),
             neverEqualPolicy()
         )
     }
     DisposableEffect(Unit) {
-        connection.setOnCommandsChangeListener { commands = it }
+        connection.setOnCommandsChangeListener { commands = it; invalidateKey++ }
         onDispose { connection.setOnCommandsChangeListener(null) }
     }
     Box(Modifier.fillMaxSize()) {
         val listState = rememberLazyListState()
-        val stableCommands = remember(groupItems, commands) {
+        val stableCommands = remember(groupItems, invalidateKey) {
             if (!groupItems) commands
+                .sortedBy { v -> v.orderId }
                 .toImmutableList()
             else commands
                 .groupBy { it.group }
@@ -178,7 +178,7 @@ private fun ConnectionUI(
                 }
 
                 AnimatedVisibility(
-                    groupItems && isGroupStart && item.group.isNotBlank(),
+                    visible = groupItems && isGroupStart && item.group.isNotBlank(),
                     enter = fadeIn() + expandIn(expandFrom = Alignment.CenterStart),
                     exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterStart)
                 ) {

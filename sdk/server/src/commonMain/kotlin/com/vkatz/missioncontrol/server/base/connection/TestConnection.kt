@@ -2,10 +2,11 @@ package com.vkatz.missioncontrol.server.base.connection
 
 import com.vkatz.missioncontrol.common.Command
 import com.vkatz.missioncontrol.common.Command.*
+import com.vkatz.missioncontrol.common.ValueCommand
 
 class TestConnection : AbsConnection() {
 
-    private infix fun Command.group(name: String) = apply { this.group = name }
+    private infix fun ValueCommand<*>.group(name: String) = apply { this.group = name }
 
     private val testCommands = listOf(
         ColorPropertyUpdate(0xFFFF0000.toInt(), "Color"),
@@ -26,7 +27,7 @@ class TestConnection : AbsConnection() {
         BooleanPropertyUpdate(false, "Boolean?", true) group "Bool",
     )
 
-    override fun setOnCommandsChangeListener(listener: ((List<Command>) -> Unit)?) {
+    override fun setOnCommandsChangeListener(listener: ((List<ValueCommand<*>>) -> Unit)?) {
         listener?.invoke(testCommands)
     }
 

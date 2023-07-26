@@ -1,17 +1,18 @@
 package com.vkatz.missioncontrol.server.base.connection
 
 import com.vkatz.missioncontrol.common.Command
-import com.vkatz.missioncontrol.common.Command.*
+import com.vkatz.missioncontrol.common.Command.ConnectionName
+import com.vkatz.missioncontrol.common.Command.PropertyRemove
 import com.vkatz.missioncontrol.common.MissionControlTPCChannel
 import com.vkatz.missioncontrol.common.ValueCommand
 import io.ktor.network.sockets.*
 
 class SocketConnection(socket: Socket) : AbsConnection() {
     private val channel = MissionControlTPCChannel(socket)
-    private val activeCommands = ArrayList<Command>()
-    private var onCommandsChangedListener: ((List<Command>) -> Unit)? = null
+    private val activeCommands = ArrayList<ValueCommand<*>>()
+    private var onCommandsChangedListener: ((List<ValueCommand<*>>) -> Unit)? = null
 
-    override fun setOnCommandsChangeListener(listener: ((List<Command>) -> Unit)?) {
+    override fun setOnCommandsChangeListener(listener: ((List<ValueCommand<*>>) -> Unit)?) {
         this.onCommandsChangedListener = listener
         onCommandsChangedListener?.invoke(activeCommands)
     }

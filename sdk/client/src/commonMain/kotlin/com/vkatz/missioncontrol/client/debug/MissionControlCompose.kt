@@ -1,6 +1,8 @@
 package com.vkatz.missioncontrol.client.debug
 
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.vkatz.missioncontrol.common.Command
@@ -9,59 +11,79 @@ import com.vkatz.missioncontrol.common.ValueCommand
 
 @Composable
 fun rememberMissionControlState(
-    value: Int, name: String, range: ClosedRange<Int>? = null
+    value: Int,
+    name: String,
+    range: ClosedRange<Int>? = null,
+    group: String = "",
 ) = rememberMissionControlState {
-    IntPropertyUpdate(value, name, false, range?.start, range?.endInclusive)
+    IntPropertyUpdate(value, name, false, range?.start, range?.endInclusive, group)
 }.nn(value)
 
 @Composable
 fun rememberMissionControlState(
-    value: Int?, name: String, range: ClosedRange<Int>? = null
+    value: Int?,
+    name: String,
+    range: ClosedRange<Int>? = null,
+    group: String = "",
 ) = rememberMissionControlState {
-    IntPropertyUpdate(value, name, true, range?.start, range?.endInclusive)
+    IntPropertyUpdate(value, name, true, range?.start, range?.endInclusive, group)
 }
 
 @Composable
 fun rememberMissionControlState(
-    value: Float, name: String, range: ClosedRange<Float>? = null
+    value: Float,
+    name: String,
+    range: ClosedRange<Float>? = null,
+    group: String = "",
 ) = rememberMissionControlState {
-    FloatPropertyUpdate(value, name, false, range?.start, range?.endInclusive)
+    FloatPropertyUpdate(value, name, false, range?.start, range?.endInclusive, group)
 }.nn(value)
 
 @Composable
 fun rememberMissionControlState(
-    value: Float?, name: String, range: ClosedRange<Float>? = null
+    value: Float?,
+    name: String,
+    range: ClosedRange<Float>? = null,
+    group: String = "",
 ) = rememberMissionControlState {
-    FloatPropertyUpdate(value, name, true, range?.start, range?.endInclusive)
+    FloatPropertyUpdate(value, name, true, range?.start, range?.endInclusive, group)
 }
 
 @Composable
 fun rememberMissionControlState(
-    value: Boolean, name: String
+    value: Boolean,
+    name: String,
+    group: String = "",
 ) = rememberMissionControlState {
-    BooleanPropertyUpdate(value, name, false)
+    BooleanPropertyUpdate(value, name, false, group)
 }.nn(value)
 
 @Composable
 fun rememberMissionControlState(
-    value: Boolean?, name: String
+    value: Boolean?,
+    name: String,
+    group: String = "",
 ) = rememberMissionControlState {
-    BooleanPropertyUpdate(value, name, true)
+    BooleanPropertyUpdate(value, name, true, group)
 }
 
 @Composable
 fun rememberMissionControlState(
-    value: String, name: String
+    value: String,
+    name: String,
+    group: String = "",
 ) = rememberMissionControlState {
-    StringPropertyUpdate(value, name)
+    StringPropertyUpdate(value, name, group)
 }
 
 @Composable
 fun rememberMissionControlState(
-    value: Color, name: String
+    value: Color,
+    name: String,
+    group: String = "",
 ): MutableState<Color> {
     val rawState = rememberMissionControlState {
-        ColorPropertyUpdate(value.toArgb(), name)
+        ColorPropertyUpdate(value.toArgb(), name, group)
     }
     val state = remember { mutableStateOf(Color(rawState.value)) }
     LaunchedEffect(state.value) {
@@ -77,24 +99,33 @@ fun rememberMissionControlState(
 
 @Composable
 fun rememberMissionControlInfoState(
-    value: String, name: String
+    value: String,
+    name: String,
+    group: String = "",
 ) = rememberMissionControlState {
-    InfoPropertyUpdate(value, name)
+    InfoPropertyUpdate(value, name, group)
 }
 
 @Composable
 fun rememberMissionControlOptionState(
-    value: Int, name: String, options: List<String>
+    value: Int,
+    name: String,
+    options: List<String>,
+    group: String = "",
 ) = rememberMissionControlState {
-    OptionPropertyUpdate(value, name, options)
+    OptionPropertyUpdate(value, name, options, group)
 }
 
 @Composable
 fun rememberMissionControlActionState(
-    name: String, description: String, actionButton: String, action: (() -> Unit)? = null
+    name: String,
+    description: String,
+    actionButton: String,
+    group: String = "",
+    action: (() -> Unit)? = null,
 ): State<Long> {
     val state = rememberMissionControlState {
-        ActionPropertyUpdate(name, description, actionButton)
+        ActionPropertyUpdate(name, description, actionButton, group)
     }
     var skips by remember { mutableStateOf(1) }
     LaunchedEffect(state.value) {
@@ -107,9 +138,10 @@ fun rememberMissionControlActionState(
 
 @Composable
 private fun <T, C> rememberMissionControlState(
-    commandBuilder: () -> C
+    commandBuilder: () -> C,
 ): MutableState<T> where C : Command, C : ValueCommand<T> {
-    val command = remember { commandBuilder() }
+    val order = currentComposer.currentMarker
+    val command = remember { commandBuilder().apply { orderId = -order } }
     val state = remember { mutableStateOf(command.value) }
     LaunchedEffect(Unit) {
         MissionControlClient.start()

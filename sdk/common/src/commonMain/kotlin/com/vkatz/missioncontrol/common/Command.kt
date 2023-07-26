@@ -9,13 +9,15 @@ private var globalOrderId = AtomicInteger()
 interface ValueCommand<T : Any?> {
     var value: T
     val name: String
+    var group: String
+    val uuid: String
+    var orderId: Int
 }
 
 @Serializable
 sealed class Command {
     var orderId: Int = globalOrderId.getAndIncrement()
     val uuid: String = UUID.randomUUID().toString()
-    var group: String = ""
 
     // action commands
 
@@ -33,7 +35,8 @@ sealed class Command {
         override val name: String,
         val nullable: Boolean = true,
         val min: Int? = null,
-        val max: Int? = null
+        val max: Int? = null,
+        override var group: String = ""
     ) : Command(), ValueCommand<Int?>
 
     @Serializable
@@ -42,7 +45,8 @@ sealed class Command {
         override val name: String,
         val nullable: Boolean = true,
         val min: Float? = null,
-        val max: Float? = null
+        val max: Float? = null,
+        override var group: String = ""
     ) : Command(), ValueCommand<Float?>
 
     @Serializable
@@ -50,32 +54,37 @@ sealed class Command {
         override var value: Boolean?,
         override val name: String,
         val nullable: Boolean = true,
+        override var group: String = ""
     ) : Command(), ValueCommand<Boolean?>
 
     @Serializable
     data class StringPropertyUpdate(
         override var value: String,
         override val name: String,
+        override var group: String = ""
     ) : Command(), ValueCommand<String>
 
     @Serializable
     data class ColorPropertyUpdate(
         override var value: Int,
         override val name: String,
+        override var group: String = ""
     ) : Command(), ValueCommand<Int>
 
     @Serializable
     data class OptionPropertyUpdate(
         override var value: Int,
         override val name: String,
-        val options: List<String>
+        val options: List<String>,
+        override var group: String = ""
     ) : Command(), ValueCommand<Int>
 
     @Serializable
     data class ActionPropertyUpdate(
         override val name: String,
         val description: String,
-        val actionButton: String
+        val actionButton: String,
+        override var group: String = ""
     ) : Command(), ValueCommand<Long> {
         override var value: Long = 0L
     }
@@ -84,5 +93,6 @@ sealed class Command {
     data class InfoPropertyUpdate(
         override var value: String,
         override val name: String,
+        override var group: String = ""
     ) : Command(), ValueCommand<String>
 }

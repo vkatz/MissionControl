@@ -2,12 +2,12 @@ package com.vkatz.missioncontrol.server.base.ui.commands
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.vkatz.missioncontrol.common.Command
 import com.vkatz.missioncontrol.common.Command.*
+import com.vkatz.missioncontrol.common.ValueCommand
 
 @Composable
 internal fun Command(
-    command: Command,
+    command: ValueCommand<*>,
     modifier: Modifier = Modifier,
     onChanged: () -> Unit
 ) {
@@ -20,6 +20,6 @@ internal fun Command(
         is ColorPropertyUpdate -> ColorCommand(command, modifier, onChanged)
         is OptionPropertyUpdate -> OptionCommand(command, modifier, onChanged)
         is ActionPropertyUpdate -> ActionCommand(command, modifier, onChanged)
-        else -> NotImplementedCommand(command, modifier)
+        else -> NotImplementedCommand(command)
     }
 }

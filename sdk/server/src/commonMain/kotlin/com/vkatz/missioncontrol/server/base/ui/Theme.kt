@@ -1,19 +1,14 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.vkatz.missioncontrol.server.base.ui
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 private val NOT_SPECIFIED = Color(0xFFFF0000)
 
 @Composable
 internal fun MissionControlTheme(
-    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
